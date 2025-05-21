@@ -31,6 +31,10 @@ include(pico_sdk_import.cmake)
 
 project(key_buzzer_demo C CXX ASM)
 
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 

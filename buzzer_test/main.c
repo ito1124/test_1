@@ -17,6 +17,8 @@ volatile bool button_pressed = false;
 #define BUZZER_ON 0.3 // ブザーONのデューティサイクル（30%）
 #define BUZZER_OFF 0  // ブザーOFFのデューティサイクル（0%）
 
+int button_pressed_count = 0; //ボタンが押された回数をカウントする変数
+
 // ラの音（A3）を再生する関数
 // 引数: slice_num - PWMスライス番号(PWM機能を構成する独立した信号生成ユニット)
 void play_note_a(uint slice_num)
@@ -41,19 +43,27 @@ void play_note_a(uint slice_num)
     pwm_set_chan_level(slice_num, PWM_CHAN_A, (125000 / freq) * BUZZER_ON);
 }
 
+
 // タイマー割り込み関数
 bool timer_callback(struct repeating_timer *rt)
 {
+
     // ボタンの状態を読み取る（プルアップなので、押されていないときはHIGH、押されているときはLOW）
     if (gpio_get(BUTTON_PIN) == 0)
     {
         // ボタンが押されたときの処理
-        button_pressed = true;
+        button_pressed_count++; // ボタンが押された回数をカウント
+        if(button_pressed_count > 3){
+            button_pressed = true;
+        }
+
+
     }
     else
     {
         // ボタンが離されたときの処理
         button_pressed = false;
+        button_pressed_count = 0;
     }
     return true; // 継続してタイマーを動作させる
 }
